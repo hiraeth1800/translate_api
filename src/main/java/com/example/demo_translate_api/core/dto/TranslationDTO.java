@@ -1,4 +1,4 @@
-package com.example.demo_translate_api.dto;
+package com.example.demo_translate_api.core.dto;
 
 public class TranslationDTO {
     private String locale;
@@ -36,5 +36,14 @@ public class TranslationDTO {
 
     public void setTranslation(String translation) {
         this.translation = translation;
+    }
+
+    @Override
+    public String toString() {
+        return "TranslationDTO{" +
+                "locale='" + locale + '\'' +
+                ", key='" + key + '\'' +
+                ", translation='" + translation + '\'' +
+                '}';
     }
 }
