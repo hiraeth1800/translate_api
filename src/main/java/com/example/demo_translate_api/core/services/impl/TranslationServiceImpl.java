@@ -25,22 +25,6 @@ public class TranslationServiceImpl implements TranslationService {
     public TranslationServiceImpl(TranslationGateway translationGateway, LanguageService languageService) {
         this.translationGateway = translationGateway;
         this.languageService = languageService;
-        TranslationDTO dto = new TranslationDTO("en", "TEST", "test");
-        TranslationDTO dto1 = new TranslationDTO("en", "HOME", "Home");
-        TranslationDTO dto2 = new TranslationDTO("en", "ABOUT", "About");
-        TranslationDTO dto3 = new TranslationDTO("en", "EDIT", "Edit");
-        TranslationDTO dto4 = new TranslationDTO("en", "DESCRIPTION", "Description");
-        TranslationDTO dto5 = new TranslationDTO("nl", "TEST", "test");
-        TranslationDTO dto6 = new TranslationDTO("nl", "HOME", "Start");
-        TranslationDTO dto7 = new TranslationDTO("nl", "Edit", "Wijzig");
-        addTranslation(dto);
-        addTranslation(dto1);
-        addTranslation(dto2);
-        addTranslation(dto3);
-        addTranslation(dto4);
-        addTranslation(dto5);
-        addTranslation(dto6);
-        addTranslation(dto7);
     }
 
     @Override
@@ -86,7 +70,7 @@ public class TranslationServiceImpl implements TranslationService {
             if (translation.getKey().equals(translationDTO.getKey().toUpperCase())) {
                 translation.setValue(translationDTO.getTranslation());
                 translationGateway.save(translation);
-                break;
+                return translationDTO;
             }
         }
         LOGGER.warn("No key " + translationDTO.getKey() + " found");

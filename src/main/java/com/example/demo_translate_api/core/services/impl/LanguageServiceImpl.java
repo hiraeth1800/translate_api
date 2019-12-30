@@ -59,9 +59,9 @@ public class LanguageServiceImpl implements LanguageService {
 
     @Override
     public String removeLanguage(String locale) {
-        return languageGateway
-                .deleteById(findByLocale(locale).getLanguageId())
-                .getLocale();
+        languageGateway
+                .deleteById(findByLocale(locale).getLanguageId());
+        return locale;
     }
 
     @Override

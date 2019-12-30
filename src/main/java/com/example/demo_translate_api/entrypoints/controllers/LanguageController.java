@@ -1,5 +1,6 @@
 package com.example.demo_translate_api.entrypoints.controllers;
 
+import com.example.demo_translate_api.core.dto.StringResponse;
 import com.example.demo_translate_api.core.services.api.KeyService;
 import com.example.demo_translate_api.exceptions.DuplicateLanguageException;
 import com.example.demo_translate_api.exceptions.LanguageNotFoundException;
@@ -26,7 +27,7 @@ public class LanguageController {
 
     @GetMapping("")
     public ResponseEntity getLanguages() {
-        LOGGER.warn("getLanguages  @/api/languages/  NOT IMPLEMENTED");
+        LOGGER.info("getLanguages  @/api/languages/");
         return ResponseEntity.ok(languageService.getLanguages());
         //
         //return ResponseEntity.status(HttpStatus.NOT_IMPLEMENTED).body("Not implemented yet. Should return List with languages");
@@ -44,8 +45,8 @@ public class LanguageController {
         //return ResponseEntity.status(HttpStatus.NOT_IMPLEMENTED).body("Not implemented yet. Should return a concurrentHashMap with the translations");
     }
 
-    @PostMapping("/add/{locale}")
-    public ResponseEntity addLanguage(@PathVariable String locale) {
+    @PostMapping("/add")
+    public ResponseEntity addLanguage(@RequestBody String locale) {
         LOGGER.info("addLanguage  @/api/languages/add/{locale}");
         try {
             languageService.addLanguage(locale);
@@ -61,9 +62,9 @@ public class LanguageController {
     public ResponseEntity removeLanguage(@RequestBody String locale) {
         LOGGER.info("removeLanguage  @/api/languages/delete");
         try {
-            languageService.removeLanguage(locale);
-            return ResponseEntity.ok(locale);
-        } catch (NullPointerException e) {
+            StringResponse response = new StringResponse(languageService.removeLanguage(locale));
+            return ResponseEntity.ok(response);
+        } catch (LanguageNotFoundException e) {
             return ResponseEntity.status(500).body(e.getMessage());
         }
         // a concurrentHashMap with the translations that are deleted
