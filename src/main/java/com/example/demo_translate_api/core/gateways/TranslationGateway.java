@@ -9,4 +9,5 @@ import java.util.List;
 @Service
 public interface TranslationGateway extends Gateway<Translation> {
     Translation findByLanguageAndKey(Language language, String key);
+    List<Translation> findByKey(String key);
 }

@@ -13,6 +13,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -94,48 +95,17 @@ public class TranslationServiceImpl implements TranslationService {
     }
 
     @Override
+    public Translation save(Translation translation) {
+        return translationGateway.save(translation);
+    }
+
+    @Override
     public Translation deleteById(int translationId) {
         return translationGateway.deleteById(translationId);
     }
 
-    /*@Override
-    public List<Translation> getTranslationsByLanguage(Language2 language) {
-        return translationRepository.getAllByLanguage(language);
-    }
-
     @Override
-    public String addTranslation(TranslationDTO translationDTO) {
-        //boolean translationNotExists = translationRepository.notExistsByLanguageAndKey(languageService.getLanguageByLocale2(translationDTO.getLocale()),
-        //        keyService.getByKey(translationDTO.getKey()));
-        //translationNotExists ? Translation translation = new Translation(translationDTO.getLocale(), )
-        try {
-            return this.languageService.getLanguageByLocale(translationDTO.getLocale())
-                    .getTranslations()
-                    .putIfAbsent(translationDTO.getKey(), translationDTO.getTranslation());
-        } catch (LanguageServiceException e) {
-            throw new TranslateServiceException(e.getMessage());
-        }
+    public List<Translation> findByKey(String key) {
+        return translationGateway.findByKey(key);
     }
-
-    @Override
-    public void updateTranslation(TranslationDTO translationDTO) {
-        System.out.println(translationDTO);
-        this.languageService.getLanguageByLocale(translationDTO.getLocale())
-                .getTranslations()
-                .remove(translationDTO.getKey());
-        this.languageService.getLanguageByLocale(translationDTO.getLocale())
-                .getTranslations()
-                .put(translationDTO.getKey(), translationDTO.getTranslation());
-    }
-
-    @Override
-    public void removeTranslation(KeyDTO keyDTO) {
-        try {
-            this.languageService.getLanguageByLocale(keyDTO.getLocale())
-                    .removeTranslation(keyDTO.getKey());
-        } catch (LanguageServiceException e) {
-            throw new TranslateServiceException(e.getMessage());
-        }
-
-    }*/
 }

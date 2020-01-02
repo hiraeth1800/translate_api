@@ -11,7 +11,11 @@ import java.util.List;
 @Table
 public class Language {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @SequenceGenerator(name="language_seq",
+            sequenceName="language_seq",
+            allocationSize=1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE,
+            generator="language_seq")
     private int languageId;
     private String locale;
     @LazyCollection(LazyCollectionOption.FALSE)

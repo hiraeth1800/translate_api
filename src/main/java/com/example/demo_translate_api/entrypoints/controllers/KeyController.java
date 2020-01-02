@@ -1,14 +1,12 @@
 package com.example.demo_translate_api.entrypoints.controllers;
 
+import com.example.demo_translate_api.core.dto.StringResponse;
 import com.example.demo_translate_api.core.services.api.KeyService;
 import com.example.demo_translate_api.exceptions.LanguageNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import javax.validation.constraints.Null;
 
 @RestController
 @RequestMapping("/api/keys")
@@ -63,7 +61,8 @@ public class KeyController {
     public ResponseEntity deleteKey(@PathVariable String key) {
         LOGGER.info("deleteKey  @/api/keys/delete/{key}");
         try {
-            return ResponseEntity.ok(keyService.removeKey(key));
+            StringResponse response = new StringResponse(keyService.deleteKey(key));
+            return ResponseEntity.ok(response);
         } catch (NullPointerException e) {
             return ResponseEntity.status(500).body(e.getMessage());
         }
@@ -72,12 +71,18 @@ public class KeyController {
 
     @PostMapping("/delete")
     public ResponseEntity deleteKeys(@RequestBody String[] keys) {
-        LOGGER.info("deleteKey  @/api/keys/delete  NOT IMPLEMENTED");
+        LOGGER.info("deleteKey  @/api/keys/delete");
         try {
-            return ResponseEntity.ok(keyService.removeKeys(keys));
+            return ResponseEntity.ok(keyService.deleteKeys(keys));
         } catch (NullPointerException e) {
             return ResponseEntity.status(500).body(e.getMessage());
         }
         // Should return String[] with all the keys that have been deleted
+    }
+
+    @PostMapping("/add")
+    public ResponseEntity addKey(@RequestBody String key) {
+        LOGGER.info("addKey  @/api/keys/add");
+        return ResponseEntity.ok(keyService.addKey(key));
     }
 }

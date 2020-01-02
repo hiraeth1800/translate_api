@@ -9,6 +9,7 @@ public interface KeyService {
     ConcurrentHashMap<String, List<String>> getMissingKeys();
     List<String> updateKeys();
     List<String> updateKeys(String locale);
-    List<String> removeKeys(String[] keys);
-    String removeKey(String key);
+    List<String> deleteKeys(String[] keys);
+    String deleteKey(String key);
+    List<String> addKey(String key);
 }

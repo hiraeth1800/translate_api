@@ -42,6 +42,7 @@ public class KeyServiceImpl implements KeyService {
                 .getTranslations()
                 .stream().
                         map(Translation::getKey)
+                .sorted()
                 .collect(Collectors.toList());
     }
 
@@ -110,7 +111,7 @@ public class KeyServiceImpl implements KeyService {
     }
 
     @Override
-    public List<String> removeKeys(String[] keys) {
+    public List<String> deleteKeys(String[] keys) {
         List<String> deletedKeys = new ArrayList<>();
         Arrays.asList(keys).forEach(key -> {
             languageService.findAll().forEach(language -> {
@@ -133,19 +134,23 @@ public class KeyServiceImpl implements KeyService {
     }
 
     @Override
-    public String removeKey(String key) {
-        languageService.findAll().forEach(language -> {
-            Optional<Translation> translation = language.getTranslations()
-                    .stream()
-                    .filter(t -> t.getKey().equals(key.toUpperCase()))
-                    .findFirst();
-            translation.ifPresent(value -> {
-                language.getTranslations().remove(value);
-                translationService.deleteById(translation.get().getTranslationId());
-                languageService.save(language);
-
-            });
-        });
+    public String deleteKey(String key) {
+        List<Translation> translations = translationService.findByKey(key);
+        for (Translation translation : translations) {
+            translation.getLanguage().getTranslations().remove(translation);
+            translationService.deleteById(translation.getTranslationId());
+        }
         return key;
+    }
+
+    @Override
+    public List<String> addKey(String key) {
+        List<String> locales = new ArrayList<>();
+        List<Language> languages = languageService.findAll();
+        languages.forEach(l -> {
+            locales.add(l.getLocale());
+            translationService.save(new Translation(l, key));
+        });
+        return locales;
     }
 }
