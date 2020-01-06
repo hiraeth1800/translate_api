@@ -28,6 +28,11 @@ public class TranslationServiceImpl implements TranslationService {
         this.languageService = languageService;
     }
 
+    /**
+     * @KeyNotFoundException No language is found with the locale. (languageService.findByLocale)
+     * @param keyDTO A dto object containing a locale and a key.
+     * @return A dto object containing the locale, key and translation.
+     */
     @Override
     public TranslationDTO getTranslation(KeyDTO keyDTO) {
         Language language = languageService.findByLocale(keyDTO.getLocale());
@@ -46,12 +51,14 @@ public class TranslationServiceImpl implements TranslationService {
         }
     }
 
+    /**
+     * @DuplicateTranslationException A translation already exists with the key.
+     * @LanguageNotFoundException  No language is found with the locale. (languageService.findByLocale)
+     * @param translationDTO A dto object containing the locale, key and translation.
+     * @return A dto object for the created translation containing the locale, key and translation.
+     */
     @Override
     public TranslationDTO addTranslation(TranslationDTO translationDTO) {
-        /*if (translationDTO.getTranslation().isEmpty()) {
-            LOGGER.warn("Empty  translation not allowed");
-            throw new EmptyTranslationException("Empty  translation not allowed");
-        }*/ //depends on addKey method
         Language language = languageService.findByLocale(translationDTO.getLocale());
         language.getTranslations().forEach(translation -> {
             if (translation.getKey().equals(translationDTO.getKey().toUpperCase())) {
@@ -64,6 +71,12 @@ public class TranslationServiceImpl implements TranslationService {
         return translationDTO;
     }
 
+    /**
+     * @KeyNotFoundException  The language doesn't have a translation with the given key.
+     * @LanguageNotFoundException  No language is found with the locale. (languageService.findByLocale)
+     * @param translationDTO A dto object containing the locale, key and translation.
+     * @return A dto object for the updated translation containing the locale, key and translation.
+     */
     @Override
     public TranslationDTO updateTranslation(TranslationDTO translationDTO) {
         Language language = languageService.findByLocale(translationDTO.getLocale());
@@ -78,6 +91,12 @@ public class TranslationServiceImpl implements TranslationService {
         throw new KeyNotFoundException("No key " + translationDTO.getKey() + " found");
     }
 
+    /**
+     * @KeyNotFoundException  The language doesn't have a translation with the given key.
+     * @LanguageNotFoundException  No language is found with the locale. (languageService.findByLocale)
+     * @param keyDTO A dto object containing the locale and key.
+     * @return A dto object for the deleted translation containing the locale, key and translation.
+     */
     @Override
     public TranslationDTO deleteTranslation(KeyDTO keyDTO) {
         Language language = languageService.findByLocale(keyDTO.getLocale());

@@ -13,7 +13,6 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
-import java.util.zip.DataFormatException;
 
 @Service
 public class LanguageServiceImpl implements LanguageService {
@@ -25,6 +24,9 @@ public class LanguageServiceImpl implements LanguageService {
         this.languageGateway = languageGateway;
     }
 
+    /**
+     * @return A list of locales.
+     */
     @Override
     public List<String> getLanguages() {
         return languageGateway
@@ -34,6 +36,11 @@ public class LanguageServiceImpl implements LanguageService {
                 .collect(Collectors.toList());
     }
 
+    /**
+     * @LanguageNotFoundException  No language is found with the locale. (findByLocale)
+     * @param locale The locale from the requested language.
+     * @return A map containing keys as keys and translations as values.
+     */
     @Override
     public ConcurrentHashMap<String, String> getLanguageByLocale(String locale) {
         ConcurrentHashMap<String, String> translations = new ConcurrentHashMap<>();
@@ -45,6 +52,11 @@ public class LanguageServiceImpl implements LanguageService {
         return translations;
     }
 
+    /**
+     * @DuplicateLanguageException  A language with the locale already exists.
+     * @param locale The locale from the requested language.
+     * @return The language object that has been created.
+     */
     @Override
     public Language addLanguage(String locale) {
         try {
@@ -56,6 +68,10 @@ public class LanguageServiceImpl implements LanguageService {
 
     }
 
+    /**
+     * @param locale The locale from the language to delete.
+     * @return The locale from the deleted language.
+     */
     @Override
     public String removeLanguage(String locale) {
         languageGateway
@@ -68,6 +84,9 @@ public class LanguageServiceImpl implements LanguageService {
         return languageGateway.findAll();
     }
 
+    /**
+     * @LanguageNotFoundException  No language is found with the locale.
+     */
     @Override
     public Language findByLocale(String locale) {
         Language language = languageGateway.findByLocale(locale);

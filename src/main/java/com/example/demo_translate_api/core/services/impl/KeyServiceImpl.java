@@ -25,6 +25,9 @@ public class KeyServiceImpl implements KeyService {
         this.translationService = translationService;
     }
 
+    /**
+     * @return  A distinct list of all the keys.
+     */
     @Override
     public List<String> getKeys() {
         Set<String> keys = new HashSet<>();
@@ -36,6 +39,12 @@ public class KeyServiceImpl implements KeyService {
         return keys.stream().sorted().collect(Collectors.toList());
     }
 
+    /**
+     * Returns
+     * @LanguageNotFoundException No language is found with the locale. (languageService.findByLocale)
+     * @param locale the specific language
+     * @return A list of all the keys from a specific language.
+     */
     @Override
     public List<String> getKeys(String locale) {
         return languageService.findByLocale(locale)
@@ -46,6 +55,9 @@ public class KeyServiceImpl implements KeyService {
                 .collect(Collectors.toList());
     }
 
+    /**
+     * @return A map with the languages as key and the missing keys in the list of values.
+     */
     @Override
     public ConcurrentHashMap<String, List<String>> getMissingKeys() {
         ConcurrentHashMap<String, List<String>> missingKeys = new ConcurrentHashMap<>();
@@ -60,6 +72,10 @@ public class KeyServiceImpl implements KeyService {
         return missingKeys;
     }
 
+    /**
+     * For every language translations will be created for the missing keys. All new translations will have empty values
+     * @return The languages that have been updated.
+     */
     @Override
     public List<String> updateKeys() {
         List<String> updatedLanguages = new ArrayList<>();
@@ -88,6 +104,12 @@ public class KeyServiceImpl implements KeyService {
                 .collect(Collectors.toList());
     }
 
+    /**
+     * Translations will be created for the missing keys from a specific language. All new translations will have empty values
+     * @LanguageNotFoundException No language is found with the locale. (languageService.findByLocale)
+     * @param locale the specific language
+     * @return The keys that have been generated for that language.
+     */
     @Override
     public List<String> updateKeys(String locale) {
         List<String> createdKeys = new ArrayList<>();
@@ -110,6 +132,11 @@ public class KeyServiceImpl implements KeyService {
         return createdKeys;
     }
 
+    /**
+     * If a key is not existing it will be ignored.
+     * @param keys the keys that will be deleted
+     * @return The keys that have been deleted.
+     */
     @Override
     public List<String> deleteKeys(String[] keys) {
         List<String> deletedKeys = new ArrayList<>();
@@ -133,6 +160,11 @@ public class KeyServiceImpl implements KeyService {
                 .collect(Collectors.toList());
     }
 
+    /**
+     * @KeyNotFoundException When there is no translation with that key. (translationService.findByKey)
+     * @param key the key that will be deleted
+     * @return The key that have been deleted.
+     */
     @Override
     public String deleteKey(String key) {
         List<Translation> translations = translationService.findByKey(key);
@@ -143,13 +175,23 @@ public class KeyServiceImpl implements KeyService {
         return key;
     }
 
+    /**
+     * @param key the key that will be created
+     * @return A list of the languages for which a translation with the key has been created.
+     */
     @Override
     public List<String> addKey(String key) {
         List<String> locales = new ArrayList<>();
         List<Language> languages = languageService.findAll();
         languages.forEach(l -> {
-            locales.add(l.getLocale());
-            translationService.save(new Translation(l, key));
+            if (!l.getTranslations()
+                    .stream()
+                    .map(Translation::getKey)
+                    .collect(Collectors.toList())
+                    .contains(key)) {
+                locales.add(l.getLocale());
+                translationService.save(new Translation(l, key.toUpperCase()));
+            }
         });
         return locales;
     }
