@@ -120,8 +120,13 @@ public class TranslationServiceImpl implements TranslationService {
     }
 
     @Override
-    public Translation deleteById(int translationId) {
-        return translationGateway.deleteById(translationId);
+    public Translation deleteById(Long translationId) {
+        Optional<Translation> byId = translationGateway.findById(translationId);
+        if (byId.isPresent()) {
+            translationGateway.deleteById(translationId);
+            return byId.get();
+        }
+        return null;
     }
 
     @Override

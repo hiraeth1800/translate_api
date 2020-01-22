@@ -16,7 +16,7 @@ public class Language {
             allocationSize=1)
     @GeneratedValue(strategy = GenerationType.SEQUENCE,
             generator="language_seq")
-    private int languageId;
+    private Long languageId;
     private String locale;
     @LazyCollection(LazyCollectionOption.FALSE)
     @OneToMany(targetEntity = Translation.class, cascade = CascadeType.ALL, mappedBy = "language")
@@ -31,11 +31,11 @@ public class Language {
         this.translations = new ArrayList<>();
     }
 
-    public int getLanguageId() {
+    public Long getLanguageId() {
         return languageId;
     }
 
-    public void setLanguageId(int languageId) {
+    public void setLanguageId(Long languageId) {
         this.languageId = languageId;
     }
 

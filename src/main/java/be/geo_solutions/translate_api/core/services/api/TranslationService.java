@@ -13,6 +13,6 @@ public interface TranslationService {
     TranslationDTO deleteTranslation(KeyDTO translationDTO);
 
     Translation save(Translation translation);
-    Translation deleteById(int translationId);
+    Translation deleteById(Long translationId);
     List<Translation> findByKey(String key);
 }

@@ -7,7 +7,7 @@ import javax.persistence.*;
 public class Translation {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private int translationId;
+    private Long translationId;
     private String key;
     private String value;
     @ManyToOne(targetEntity = Language.class, fetch = FetchType.EAGER, optional = false)
@@ -26,11 +26,11 @@ public class Translation {
         this.value = value;
     }
 
-    public int getTranslationId() {
+    public Long getTranslationId() {
         return translationId;
     }
 
-    public void setTranslationId(int translationId) {
+    public void setTranslationId(Long translationId) {
         this.translationId = translationId;
     }
 
