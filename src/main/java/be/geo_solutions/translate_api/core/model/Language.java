@@ -11,12 +11,9 @@ import java.util.List;
 @Table
 public class Language {
     @Id
-    @SequenceGenerator(name="language_seq",
-            sequenceName="language_seq",
-            allocationSize=1)
-    @GeneratedValue(strategy = GenerationType.SEQUENCE,
-            generator="language_seq")
-    private Long languageId;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    @Column(name = "locale")
     private String locale;
     @LazyCollection(LazyCollectionOption.FALSE)
     @OneToMany(targetEntity = Translation.class, cascade = CascadeType.ALL, mappedBy = "language")
@@ -31,12 +28,12 @@ public class Language {
         this.translations = new ArrayList<>();
     }
 
-    public Long getLanguageId() {
-        return languageId;
+    public Long getId() {
+        return id;
     }
 
-    public void setLanguageId(Long languageId) {
-        this.languageId = languageId;
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public String getLocale() {

@@ -148,7 +148,7 @@ public class KeyServiceImpl implements KeyService {
                         .findFirst();
                 translation.ifPresent(value -> {
                     language.getTranslations().remove(value);
-                    translationService.deleteById(translation.get().getTranslationId());
+                    translationService.deleteById(translation.get().getId());
                     languageService.save(language);
                     deletedKeys.add(key);
                 });
@@ -170,7 +170,7 @@ public class KeyServiceImpl implements KeyService {
         List<Translation> translations = translationService.findByKey(key);
         for (Translation translation : translations) {
             translation.getLanguage().getTranslations().remove(translation);
-            translationService.deleteById(translation.getTranslationId());
+            translationService.deleteById(translation.getId());
         }
         return key;
     }

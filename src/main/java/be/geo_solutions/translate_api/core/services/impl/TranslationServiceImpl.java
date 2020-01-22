@@ -107,7 +107,7 @@ public class TranslationServiceImpl implements TranslationService {
                 .findFirst();
         if (trans.isPresent()) {
             language.getTranslations().remove(trans.get());
-            translationGateway.deleteById(trans.get().getTranslationId());
+            translationGateway.deleteById(trans.get().getId());
             return new TranslationDTO(keyDTO.getLocale(), keyDTO.getKey(), trans.get().getValue());
         }
         LOGGER.warn("No key " + keyDTO.getLocale() + " found");

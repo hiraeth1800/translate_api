@@ -6,11 +6,14 @@ import javax.persistence.*;
 @Table
 public class Translation {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long translationId;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    @Column(name = "key")
     private String key;
+    @Column(name = "value")
     private String value;
     @ManyToOne(targetEntity = Language.class, fetch = FetchType.EAGER, optional = false)
+    @JoinColumn(name = "language_id", referencedColumnName = "id")
     private Language language;
 
     public Translation() {
@@ -26,12 +29,12 @@ public class Translation {
         this.value = value;
     }
 
-    public Long getTranslationId() {
-        return translationId;
+    public Long getId() {
+        return id;
     }
 
-    public void setTranslationId(Long translationId) {
-        this.translationId = translationId;
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public String getKey() {
