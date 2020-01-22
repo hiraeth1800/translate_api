@@ -24,6 +24,9 @@ dependencies {
     compile group: 'io.springfox', name: 'springfox-swagger-ui', version: '2.9.2'
     // https://mvnrepository.com/artifact/io.springfox/springfox-swagger2
     compile group: 'io.springfox', name: 'springfox-swagger2', version: '2.9.2'
+    // https://mvnrepository.com/artifact/org.flywaydb/flyway-core
+    //compile group: 'org.flywaydb', name: 'flyway-core', version: '6.1.4'
+
 }
 
 test {

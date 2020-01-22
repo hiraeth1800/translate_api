@@ -21,7 +21,7 @@ public class SwaggerConfig {
         return new Docket(DocumentationType.SPRING_WEB)
                 .select()
                 .paths(regex("/api.*"))
-                .apis(RequestHandlerSelectors.basePackage("com.example.demo_translate_api"))
+                .apis(RequestHandlerSelectors.basePackage("be.geo_solutions.translate_api"))
                 .build()
                 .useDefaultResponseMessages(false)
                 .apiInfo(metaInfo());

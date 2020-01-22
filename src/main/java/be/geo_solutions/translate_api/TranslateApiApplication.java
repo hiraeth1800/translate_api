@@ -6,10 +6,10 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
 @SpringBootApplication
 @EnableSwagger2
-public class DemoTranslateApiApplication {
+public class TranslateApiApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(DemoTranslateApiApplication.class, args);
+        SpringApplication.run(TranslateApiApplication.class, args);
     }
 
 }
