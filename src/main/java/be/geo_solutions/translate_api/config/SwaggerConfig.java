@@ -18,12 +18,12 @@ public class SwaggerConfig {
     @Bean
     public Docket formApi() {
         // DocumentationType.SPRING_WEB does not seem to work?
-        return new Docket(DocumentationType.SPRING_WEB)
+        return new Docket(DocumentationType.SWAGGER_2)
+                .useDefaultResponseMessages(false)
                 .select()
                 .paths(regex("/api.*"))
                 .apis(RequestHandlerSelectors.basePackage("be.geo_solutions.translate_api"))
                 .build()
-                .useDefaultResponseMessages(false)
                 .apiInfo(metaInfo());
     }
 

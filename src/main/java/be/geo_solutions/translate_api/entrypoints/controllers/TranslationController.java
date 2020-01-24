@@ -9,6 +9,9 @@ import be.geo_solutions.translate_api.core.services.impl.TranslationServiceImpl;
 import be.geo_solutions.translate_api.exceptions.DuplicateTranslationException;
 import be.geo_solutions.translate_api.exceptions.EmptyTranslationException;
 import be.geo_solutions.translate_api.exceptions.KeyNotFoundException;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -26,6 +29,11 @@ public class TranslationController {
         this.translationService = translateServiceImpl;
     }
 
+    @ApiOperation(value = "Get a translation by locale and key")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successfully retrieved the translation", response = TranslationDTO.class),
+            @ApiResponse(code = 500, message = "No language with the given locale found / No translation found with the given key")
+    })
     @GetMapping("/get")
     public ResponseEntity getTranslation(@RequestBody KeyDTO keyDTO) {
         LOGGER.info("getTranslation  @/api/translation/");
@@ -34,20 +42,28 @@ public class TranslationController {
         } catch (LanguageNotFoundException | KeyNotFoundException e) {
             return ResponseEntity.status(500).body(e.getMessage());
         }
-        //Should return a DTO with locale, key and value
     }
 
+    @ApiOperation(value = "Add a translation")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successfully retrieved the created translation", response = TranslationDTO.class),
+            @ApiResponse(code = 500, message = "No language with the given locale found / A translation with the key already exist for this locale")
+    })
     @PostMapping("/add")
     public ResponseEntity addTranslation(@RequestBody TranslationDTO translationDTO) {
         LOGGER.info("addTranslation  @/api/translation/add");
         try {
             return ResponseEntity.ok(translationService.addTranslation(translationDTO));
-        } catch (EmptyTranslationException | LanguageNotFoundException | DuplicateTranslationException e) {
+        } catch (LanguageNotFoundException | DuplicateTranslationException e) {
             return ResponseEntity.status(500).body(e.getMessage());
         }
-        //Should return the created DTO with locale, key and value
     }
 
+    @ApiOperation(value = "Update a translation")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successfully retrieved the updated translation", response = TranslationDTO.class),
+            @ApiResponse(code = 500, message = "No language with the given locale found / No translation found with the given key and locale")
+    })
     @PutMapping("/update")
     public ResponseEntity updateTranslation(@RequestBody TranslationDTO translationDTO) {
         LOGGER.info("updateTranslation  @/api/translation/update");
@@ -56,10 +72,13 @@ public class TranslationController {
         } catch (LanguageNotFoundException | KeyNotFoundException e) {
             return ResponseEntity.status(500).body(e.getMessage());
         }
-        // Should return the changed DTO with locale, key and value
     }
 
-
+    @ApiOperation(value = "Delete a translation")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successfully retrieved the deleted translation", response = TranslationDTO.class),
+            @ApiResponse(code = 500, message = "No language with the given locale found / A translation with the key already exist for this locale")
+    })
     @PostMapping("/delete")
     public ResponseEntity deleteTranslation(@RequestBody KeyDTO keyDTO) {
         LOGGER.info("deleteTranslation  @/api/translation/delete");
@@ -68,20 +87,5 @@ public class TranslationController {
         } catch (LanguageNotFoundException | KeyNotFoundException e) {
             return ResponseEntity.status(500).body(e.getMessage());
         }
-        // Should return the removed DTO with locale, key and value
     }
-
-
-
-
-
-
-    @PostMapping("/import")
-    public ResponseEntity bulkAddTranslation(@RequestBody String locale) {
-        // TODO add translations in bulk with files for example
-        return ResponseEntity.ok("ok");
-    }
-
-    // TODO export language
-    // TODO import language(s)
 }

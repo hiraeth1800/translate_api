@@ -9,7 +9,7 @@ public interface LanguageService {
     List<String> getLanguages();
     ConcurrentHashMap<String, String> getLanguageByLocale(String locale);
     Language addLanguage(String locale);
-    String removeLanguage(String locale);
+    String deleteLanguage(String locale);
 
     List<Language> findAll();
     Language findByLocale(String locale);

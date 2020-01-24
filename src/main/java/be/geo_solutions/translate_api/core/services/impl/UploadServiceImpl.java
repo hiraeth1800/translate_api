@@ -3,18 +3,22 @@ package be.geo_solutions.translate_api.core.services.impl;
 import be.geo_solutions.translate_api.core.dto.TranslationDTO;
 import be.geo_solutions.translate_api.core.model.Language;
 import be.geo_solutions.translate_api.core.model.Translation;
+import be.geo_solutions.translate_api.core.services.api.KeyService;
 import be.geo_solutions.translate_api.core.services.api.LanguageService;
 import be.geo_solutions.translate_api.core.services.api.TranslationService;
 import be.geo_solutions.translate_api.core.services.api.UploadService;
 import be.geo_solutions.translate_api.exceptions.FileExtensionException;
 import be.geo_solutions.translate_api.exceptions.FileFormatException;
 import be.geo_solutions.translate_api.exceptions.LanguageNotFoundException;
+import be.geo_solutions.translate_api.exceptions.ProcessFileException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -23,10 +27,12 @@ public class UploadServiceImpl implements UploadService {
     private static final Logger LOGGER = LoggerFactory.getLogger(UploadServiceImpl.class);
     private final LanguageService languageService;
     private final TranslationService translationService;
+    private final KeyService keyService;
 
-    public UploadServiceImpl(LanguageService languageService, TranslationService translationService) {
+    public UploadServiceImpl(LanguageService languageService, TranslationService translationService, KeyService keyService) {
         this.languageService = languageService;
         this.translationService = translationService;
+        this.keyService = keyService;
     }
 
     @Override
@@ -39,7 +45,7 @@ public class UploadServiceImpl implements UploadService {
             case "xlsx":
                 return this.processExcelFile(file, type);*/
             case "csv":
-                return this.createOrUpdateTranslations(this.processCsvFile(tempFile));
+                return this.createOrUpdateTranslations(this.processTranslationCsvFile(tempFile));
             default:
                 throw new FileExtensionException("Wrong extension. File should be a an excel or csv file.");
         }
@@ -81,7 +87,7 @@ public class UploadServiceImpl implements UploadService {
         return fileName.substring(lastIndexOf + 1);
     }
 
-    private ConcurrentHashMap<String, List<TranslationDTO>> processCsvFile(File file) {
+    private ConcurrentHashMap<String, List<TranslationDTO>> processTranslationCsvFile(File file) {
         ConcurrentHashMap<String, List<TranslationDTO>> sortedByLocales = new ConcurrentHashMap<>();
         try (Scanner scanner = new Scanner(file)) {
             scanner.useDelimiter("[\\n]");
@@ -118,5 +124,33 @@ public class UploadServiceImpl implements UploadService {
             e.printStackTrace();
         }
         return sortedByLocales;
+    }
+
+    @Override
+    public void updateKeysFromFile(String type, File tempFile) {
+        String ext = this.getExtension(tempFile);
+        switch (ext.toLowerCase()) {
+            case "json":
+                updateKeys(processKeysJsonFile(tempFile)); break;
+            case "csv":
+                System.out.println("csv"); break;
+            default:
+                throw new FileExtensionException("Wrong extension. File should be a an excel or csv file.");
+        }
+    }
+
+    private HashMap processKeysJsonFile(File file) {
+        try {
+            return new ObjectMapper().readValue(file, HashMap.class);
+        } catch(IOException e) {
+            throw new ProcessFileException(e.getMessage());
+        }
+    }
+
+    private void updateKeys(HashMap keys) {
+        for (Object o : keys.keySet()) {
+            System.out.println(o.toString());
+            keyService.addKey(o.toString().toUpperCase());
+        }
     }
 }

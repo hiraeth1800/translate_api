@@ -11,4 +11,6 @@ import java.util.List;
 
 public interface UploadService {
     List<TranslationDTO> createTranslationsFromFile(String type, File tempFile);
+
+    void updateKeysFromFile(String type, File tempFile);
 }

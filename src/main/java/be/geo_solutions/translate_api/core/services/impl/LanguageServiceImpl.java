@@ -72,7 +72,7 @@ public class LanguageServiceImpl implements LanguageService {
      * @return The locale from the deleted language.
      */
     @Override
-    public String removeLanguage(String locale) {
+    public String deleteLanguage(String locale) {
         languageGateway
                 .deleteById(findByLocale(locale).getId());
         return locale;
