@@ -41,9 +41,9 @@ public class UploadServiceImpl implements UploadService {
         // read content try to parse into translation and save - > if saved add to list return list (filename is locale)
         String ext = this.getExtension(tempFile);
         switch (ext.toLowerCase()) {
-            /*case "xls":
+            case "xls":
             case "xlsx":
-                return this.processExcelFile(file, type);*/
+                throw new RuntimeException("not implemented");
             case "csv":
                 return this.createOrUpdateTranslations(this.processTranslationCsvFile(tempFile));
             default:
@@ -133,7 +133,7 @@ public class UploadServiceImpl implements UploadService {
             case "json":
                 updateKeys(processKeysJsonFile(tempFile)); break;
             case "csv":
-                System.out.println("csv"); break;
+                throw new RuntimeException("not implemented");
             default:
                 throw new FileExtensionException("Wrong extension. File should be a an excel or csv file.");
         }
@@ -149,8 +149,16 @@ public class UploadServiceImpl implements UploadService {
 
     private void updateKeys(HashMap keys) {
         for (Object o : keys.keySet()) {
-            System.out.println(o.toString());
-            keyService.addKey(o.toString().toUpperCase());
+            if (LinkedHashMap.class.equals(keys.get(o).getClass())) {
+                HashMap newLevel = new HashMap();
+                HashMap currentLevel = (HashMap) keys.get(o);
+                currentLevel.keySet().forEach(key -> {
+                    newLevel.put(o + "." + key, currentLevel.get(key));
+                });
+                updateKeys(newLevel);
+            } else {
+                keyService.addKey(o.toString().toUpperCase());
+            }
         }
     }
 }

@@ -5,7 +5,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public interface KeyService {
     List<String> getKeys();
-    List<String> getKeys(String locale);
+    List<String> getKeysByLocale(String locale);
     ConcurrentHashMap<String, List<String>> getMissingKeys();
     List<String> updateKeys();
     List<String> updateKeys(String locale);

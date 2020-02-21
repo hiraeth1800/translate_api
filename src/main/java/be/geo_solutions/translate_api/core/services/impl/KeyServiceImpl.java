@@ -28,7 +28,6 @@ public class KeyServiceImpl implements KeyService {
     /**
      * @return  A distinct list of all the keys.
      */
-    @Override
     public List<String> getKeys() {
         Set<String> keys = new HashSet<>();
         languageService.findAll().forEach(language -> {
@@ -46,7 +45,7 @@ public class KeyServiceImpl implements KeyService {
      * @return A list of all the keys from a specific language.
      */
     @Override
-    public List<String> getKeys(String locale) {
+    public List<String> getKeysByLocale(String locale) {
         return languageService.findByLocale(locale)
                 .getTranslations()
                 .stream().
@@ -63,7 +62,7 @@ public class KeyServiceImpl implements KeyService {
         ConcurrentHashMap<String, List<String>> missingKeys = new ConcurrentHashMap<>();
         languageService.findAll().forEach(language -> {
             Set<String> allKeys = new HashSet<>(getKeys());
-            Set<String> keys = new HashSet<>(getKeys(language.getLocale()));
+            Set<String> keys = new HashSet<>(getKeysByLocale(language.getLocale()));
             allKeys.removeAll(keys);
             if (allKeys.size() > 0) {
                 missingKeys.put(language.getLocale(), new ArrayList<>(allKeys));
@@ -84,7 +83,6 @@ public class KeyServiceImpl implements KeyService {
         for (Language language : languages) {
             for (String key : keys) {
                 boolean keyFound = false;
-                // TODO while better than for with break?
                 for (Translation translation : language.getTranslations()) {
                     if (translation.getKey().equals(key)) {
                         keyFound = true;

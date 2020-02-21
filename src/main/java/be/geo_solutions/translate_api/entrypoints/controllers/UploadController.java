@@ -44,6 +44,9 @@ public class UploadController {
             List<TranslationDTO> translations = uploadService.createTranslationsFromFile(type, tempFile);
             return ResponseEntity.status(HttpStatus.OK).body(translations);
         } catch (IOException | RuntimeException e) {
+            if ("not implemented".equals(e.getMessage())) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Uploading translations from excel file is not yet implemented");
+            }
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
@@ -65,6 +68,9 @@ public class UploadController {
             uploadService.updateKeysFromFile(type, tempFile);
             return ResponseEntity.status(HttpStatus.OK).body(new StringResponse("Ok"));
         } catch (IOException | RuntimeException e) {
+            if ("not implemented".equals(e.getMessage())) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Updating keys from csv file is not yet implemented");
+            }
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());

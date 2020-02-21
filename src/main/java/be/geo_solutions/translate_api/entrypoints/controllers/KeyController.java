@@ -43,7 +43,7 @@ public class KeyController {
     public ResponseEntity getKeys(@PathVariable String locale) {
         LOGGER.info("getKeys  @/api/keys/{locale}");
         try {
-            return ResponseEntity.ok(keyService.getKeys(locale));
+            return ResponseEntity.ok(keyService.getKeysByLocale(locale));
         } catch (LanguageNotFoundException e) {
             return ResponseEntity.status(500).body(e.getMessage());
         }

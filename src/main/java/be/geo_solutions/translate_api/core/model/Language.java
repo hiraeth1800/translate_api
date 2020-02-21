@@ -6,6 +6,7 @@ import org.hibernate.annotations.LazyCollectionOption;
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Entity
 @Table
@@ -50,6 +51,19 @@ public class Language {
 
     public void setTranslations(List<Translation> translations) {
         this.translations = translations;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Language language = (Language) o;
+        return locale.equals(language.locale);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(locale);
     }
 
     @Override

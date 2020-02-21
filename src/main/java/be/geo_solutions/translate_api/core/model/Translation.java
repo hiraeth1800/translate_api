@@ -1,6 +1,7 @@
 package be.geo_solutions.translate_api.core.model;
 
 import javax.persistence.*;
+import java.util.Objects;
 
 @Entity
 @Table
@@ -59,6 +60,20 @@ public class Translation {
 
     public void setLanguage(Language language) {
         this.language = language;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Translation that = (Translation) o;
+        return key.equals(that.key) &&
+                language.equals(that.language);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(key, language);
     }
 
     @Override
