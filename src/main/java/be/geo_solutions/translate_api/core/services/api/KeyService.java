@@ -8,7 +8,7 @@ public interface KeyService {
     List<String> getKeysByLocale(String locale);
     ConcurrentHashMap<String, List<String>> getMissingKeys();
     List<String> updateKeys();
-    List<String> updateKeys(String locale);
+    List<String> updateKeysByLocale(String locale);
     List<String> deleteKeys(String[] keys);
     String deleteKey(String key);
     List<String> addKey(String key);

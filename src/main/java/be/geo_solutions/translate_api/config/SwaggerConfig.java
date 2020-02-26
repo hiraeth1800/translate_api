@@ -31,7 +31,7 @@ public class SwaggerConfig {
         ApiInfo apiInfo = new ApiInfo(
                 "Translate API",
                 "A component made to simplify translation in projects.",
-                "1.0",
+                "1.1",
                 "",
                 new Contact("", "", ""),
                 "",

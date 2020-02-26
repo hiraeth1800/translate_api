@@ -108,8 +108,7 @@ public class KeyServiceImpl implements KeyService {
      * @param locale the specific language
      * @return The keys that have been generated for that language.
      */
-    @Override
-    public List<String> updateKeys(String locale) {
+    public List<String> updateKeysByLocale(String locale) {
         List<String> createdKeys = new ArrayList<>();
         Language language = languageService.findByLocale(locale);
         List<String> keys = getKeys();
@@ -146,7 +145,7 @@ public class KeyServiceImpl implements KeyService {
                         .findFirst();
                 translation.ifPresent(value -> {
                     language.getTranslations().remove(value);
-                    translationService.deleteById(translation.get().getId());
+                        translationService.deleteById(translation.get().getId());
                     languageService.save(language);
                     deletedKeys.add(key);
                 });
@@ -165,7 +164,7 @@ public class KeyServiceImpl implements KeyService {
      */
     @Override
     public String deleteKey(String key) {
-        List<Translation> translations = translationService.findByKey(key);
+        List<Translation> translations = translationService.findByKey(key.toUpperCase());
         for (Translation translation : translations) {
             translation.getLanguage().getTranslations().remove(translation);
             translationService.deleteById(translation.getId());

@@ -8,6 +8,7 @@ import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -31,7 +32,12 @@ public class KeyController {
     @GetMapping("")
     public ResponseEntity getKeys() {
         LOGGER.info("getKeys  @/api/keys");
-        return ResponseEntity.ok(keyService.getKeys());
+        try {
+            return ResponseEntity.ok(keyService.getKeys());
+        } catch (Exception e) {
+            LOGGER.error("!!! Unexpected error:  " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new StringResponse("An unexpected error occurred"));
+        }
     }
 
     @ApiOperation(value = "Get a list of keys from a language")
@@ -45,7 +51,10 @@ public class KeyController {
         try {
             return ResponseEntity.ok(keyService.getKeysByLocale(locale));
         } catch (LanguageNotFoundException e) {
-            return ResponseEntity.status(500).body(e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        } catch (Exception e) {
+            LOGGER.error("!!! Unexpected error:  " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new StringResponse("An unexpected error occurred"));
         }
     }
 
@@ -56,7 +65,12 @@ public class KeyController {
     @GetMapping("/missing")
     public ResponseEntity getMissingKeys() {
         LOGGER.info("getMissingKeys  @/api/keys/missing");
-        return ResponseEntity.ok(keyService.getMissingKeys());
+        try {
+            return ResponseEntity.ok(keyService.getMissingKeys());
+        } catch (Exception e) {
+            LOGGER.error("!!! Unexpected error:  " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new StringResponse("An unexpected error occurred"));
+        }
     }
 
     @ApiOperation(value = "Update all the missing keys", notes = "This only updates missing keys in the backend. This is no guarantee that keys from frontend are all saved!")
@@ -66,7 +80,12 @@ public class KeyController {
     @PostMapping("/update")
     public ResponseEntity updateKeys() {
         LOGGER.info("updateKeys  @/api/keys/update");
-        return ResponseEntity.ok(keyService.updateKeys());
+        try {
+            return ResponseEntity.ok(keyService.updateKeys());
+        } catch (Exception e) {
+            LOGGER.error("!!! Unexpected error:  " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new StringResponse("An unexpected error occurred"));
+        }
     }
 
     @ApiOperation(value = "Update the keys from a language", notes = "The keys from the language are checked against all the keys distinct.")
@@ -76,7 +95,12 @@ public class KeyController {
     @PostMapping("/update/{locale}")
     public ResponseEntity updateKeys(@PathVariable String locale) {
         LOGGER.info("updateKeys  @/api/keys/update/{locale}");
-        return ResponseEntity.ok(keyService.updateKeys(locale));
+        try {
+            return ResponseEntity.ok(keyService.updateKeysByLocale(locale));
+        } catch (Exception e) {
+            LOGGER.error("!!! Unexpected error:  " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new StringResponse("An unexpected error occurred"));
+        }
     }
 
     @ApiOperation(value = "Delete a key from all languages", notes = "If a key doesn't exist it will be ignored.")
@@ -86,8 +110,13 @@ public class KeyController {
     @PostMapping("/delete/{key}")
     public ResponseEntity deleteKey(@PathVariable String key) {
         LOGGER.info("deleteKey  @/api/keys/delete/{key}");
-        StringResponse response = new StringResponse(keyService.deleteKey(key));
-        return ResponseEntity.ok(response);
+        try {
+            StringResponse response = new StringResponse(keyService.deleteKey(key));
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            LOGGER.error("!!! Unexpected error:  " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new StringResponse("An unexpected error occurred"));
+        }
     }
 
     @ApiOperation(value = "Delete a list of keys", notes = "If a key doesn't exist it will be ignored.")
@@ -97,7 +126,12 @@ public class KeyController {
     @PostMapping("/delete")
     public ResponseEntity deleteKeys(@RequestBody String[] keys) {
         LOGGER.info("deleteKey  @/api/keys/delete");
-        return ResponseEntity.ok(keyService.deleteKeys(keys));
+        try {
+            return ResponseEntity.ok(keyService.deleteKeys(keys));
+        } catch (Exception e) {
+            LOGGER.error("!!! Unexpected error:  " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new StringResponse("An unexpected error occurred"));
+        }
     }
 
     @ApiOperation(value = "Add a key")
@@ -107,6 +141,11 @@ public class KeyController {
     @PostMapping("/add")
     public ResponseEntity addKey(@RequestBody String key) {
         LOGGER.info("addKey  @/api/keys/add");
-        return ResponseEntity.ok(keyService.addKey(key));
+        try {
+            return ResponseEntity.ok(keyService.addKey(key));
+        } catch (Exception e) {
+            LOGGER.error("!!! Unexpected error:  " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new StringResponse("An unexpected error occurred"));
+        }
     }
 }

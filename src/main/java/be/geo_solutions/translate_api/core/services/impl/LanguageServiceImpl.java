@@ -5,6 +5,7 @@ import be.geo_solutions.translate_api.core.gateways.LanguageGateway;
 import be.geo_solutions.translate_api.core.model.Language;
 import be.geo_solutions.translate_api.core.services.api.LanguageService;
 import be.geo_solutions.translate_api.exceptions.DuplicateLanguageException;
+import be.geo_solutions.translate_api.exceptions.LocaleFormatException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;

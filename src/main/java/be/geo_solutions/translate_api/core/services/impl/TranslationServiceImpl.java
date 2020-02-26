@@ -47,8 +47,8 @@ public class TranslationServiceImpl implements TranslationService {
             return new TranslationDTO(translation.get().getLanguage().getLocale(),
                     translation.get().getKey(), translation.get().getValue());
         } else {
-            LOGGER.warn("No key " + keyDTO.getKey() + " found");
-            throw new KeyNotFoundException("No key " + keyDTO.getKey() + " found");
+            LOGGER.warn("No key " + keyDTO.getKey() + " found for locale " + keyDTO.getLocale());
+            throw new KeyNotFoundException("No key " + keyDTO.getKey() + " found for locale " + keyDTO.getLocale());
         }
     }
 
@@ -67,6 +67,9 @@ public class TranslationServiceImpl implements TranslationService {
                 throw new DuplicateTranslationException("Translation with key " + translationDTO.getKey() + " already exists");
             }
         });
+        if (translationDTO.getTranslation() == null) {
+            translationDTO.setTranslation("");
+        }
         Translation translation = new Translation(language, translationDTO.getKey().toUpperCase(), translationDTO.getTranslation());
         translationGateway.save(translation);
         return translationDTO;
@@ -83,13 +86,17 @@ public class TranslationServiceImpl implements TranslationService {
         Language language = languageService.findByLocale(translationDTO.getLocale());
         for (Translation translation : language.getTranslations()) {
             if (translation.getKey().equals(translationDTO.getKey().toUpperCase())) {
-                translation.setValue(translationDTO.getTranslation());
+                if (translationDTO.getTranslation() == null) {
+                    translation.setValue("");
+                } else {
+                    translation.setValue(translationDTO.getTranslation());
+                }
                 translationGateway.save(translation);
                 return translationDTO;
             }
         }
-        LOGGER.warn("No key " + translationDTO.getKey() + " found");
-        throw new KeyNotFoundException("No key " + translationDTO.getKey() + " found");
+        LOGGER.warn("No key " + translationDTO.getKey() + " found for locale " + translationDTO.getLocale());
+        throw new KeyNotFoundException("No key " + translationDTO.getKey() + " found for locale " + translationDTO.getLocale());
     }
 
     /**
@@ -110,8 +117,8 @@ public class TranslationServiceImpl implements TranslationService {
             translationGateway.deleteById(trans.get().getId());
             return new TranslationDTO(keyDTO.getLocale(), keyDTO.getKey(), trans.get().getValue());
         }
-        LOGGER.warn("No key " + keyDTO.getLocale() + " found");
-        throw new KeyNotFoundException("No key " + keyDTO.getKey() + " found");
+        LOGGER.warn("No key " + keyDTO.getLocale() + " found for locale " + keyDTO.getLocale());
+        throw new KeyNotFoundException("No key " + keyDTO.getKey() + " found for locale " + keyDTO.getLocale());
     }
 
     @Override

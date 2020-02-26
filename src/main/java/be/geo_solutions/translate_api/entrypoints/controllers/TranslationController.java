@@ -1,6 +1,7 @@
 package be.geo_solutions.translate_api.entrypoints.controllers;
 
 
+import be.geo_solutions.translate_api.core.dto.StringResponse;
 import be.geo_solutions.translate_api.exceptions.LanguageNotFoundException;
 import be.geo_solutions.translate_api.core.dto.KeyDTO;
 import be.geo_solutions.translate_api.core.dto.TranslationDTO;
@@ -12,6 +13,7 @@ import be.geo_solutions.translate_api.exceptions.KeyNotFoundException;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -40,7 +42,10 @@ public class TranslationController {
         try {
             return ResponseEntity.ok(translationService.getTranslation(keyDTO));
         } catch (LanguageNotFoundException | KeyNotFoundException e) {
-            return ResponseEntity.status(500).body(e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        } catch (Exception e) {
+            LOGGER.error("!!! Unexpected error:  " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new StringResponse("An unexpected error occurred"));
         }
     }
 
@@ -55,7 +60,10 @@ public class TranslationController {
         try {
             return ResponseEntity.ok(translationService.addTranslation(translationDTO));
         } catch (LanguageNotFoundException | DuplicateTranslationException e) {
-            return ResponseEntity.status(500).body(e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        } catch (Exception e) {
+            LOGGER.error("!!! Unexpected error:  " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new StringResponse("An unexpected error occurred"));
         }
     }
 
@@ -70,7 +78,10 @@ public class TranslationController {
         try {
             return ResponseEntity.ok(translationService.updateTranslation(translationDTO));
         } catch (LanguageNotFoundException | KeyNotFoundException e) {
-            return ResponseEntity.status(500).body(e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        } catch (Exception e) {
+            LOGGER.error("!!! Unexpected error:  " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new StringResponse("An unexpected error occurred"));
         }
     }
 
@@ -85,7 +96,10 @@ public class TranslationController {
         try {
             return ResponseEntity.ok(translationService.deleteTranslation(keyDTO));
         } catch (LanguageNotFoundException | KeyNotFoundException e) {
-            return ResponseEntity.status(500).body(e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        } catch (Exception e) {
+            LOGGER.error("!!! Unexpected error:  " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new StringResponse("An unexpected error occurred"));
         }
     }
 }

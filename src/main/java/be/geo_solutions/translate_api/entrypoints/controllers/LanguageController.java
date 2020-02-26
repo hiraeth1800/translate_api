@@ -10,6 +10,7 @@ import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -35,7 +36,12 @@ public class LanguageController {
     @GetMapping("")
     public ResponseEntity getLanguages() {
         LOGGER.info("getLanguages  @/api/languages/");
-        return ResponseEntity.ok(languageService.getLanguages());
+        try {
+            return ResponseEntity.ok(languageService.getLanguages());
+        } catch (Exception e) {
+            LOGGER.error("!!! Unexpected error:  " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new StringResponse("An unexpected error occurred"));
+        }
     }
 
     @ApiOperation(value = "Get translations from a language")
@@ -49,7 +55,10 @@ public class LanguageController {
         try {
             return ResponseEntity.ok(languageService.getLanguageByLocale(locale));
         } catch (LanguageNotFoundException e) {
-            return ResponseEntity.status(500).body(e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        } catch (Exception e) {
+            LOGGER.error("!!! Unexpected error:  " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new StringResponse("An unexpected error occurred"));
         }
     }
 
@@ -63,10 +72,14 @@ public class LanguageController {
         LOGGER.info("addLanguage  @/api/languages/add/{locale}");
         try {
             languageService.addLanguage(locale);
-            keyService.updateKeys(locale);
+            //not adding all the keys cause the values will be "" leaving the texts blank by initiating the language
+            //keyService.updateKeysByLocale(locale);
             return ResponseEntity.ok(languageService.getLanguageByLocale(locale));
         } catch (DuplicateLanguageException | LanguageNotFoundException e) {
-            return ResponseEntity.status(500).body(e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        } catch (Exception e) {
+            LOGGER.error("!!! Unexpected error:  " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new StringResponse("An unexpected error occurred"));
         }
     }
 
@@ -82,7 +95,10 @@ public class LanguageController {
             StringResponse response = new StringResponse(languageService.deleteLanguage(locale));
             return ResponseEntity.ok(response);
         } catch (LanguageNotFoundException e) {
-            return ResponseEntity.status(500).body(e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        } catch (Exception e) {
+            LOGGER.error("!!! Unexpected error:  " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new StringResponse("An unexpected error occurred"));
         }
     }
 }

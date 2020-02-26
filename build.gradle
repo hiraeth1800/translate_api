@@ -17,9 +17,7 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-jdbc'
     runtimeOnly 'org.postgresql:postgresql'
     implementation 'org.springframework.boot:spring-boot-starter-web'
-    testImplementation('org.springframework.boot:spring-boot-starter-test') {
-        exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
-    }
+    testImplementation('org.springframework.boot:spring-boot-starter-test')
     // https://mvnrepository.com/artifact/io.springfox/springfox-swagger-ui
     compile group: 'io.springfox', name: 'springfox-swagger-ui', version: '2.9.2'
     // https://mvnrepository.com/artifact/io.springfox/springfox-swagger2
@@ -28,8 +26,6 @@ dependencies {
     compile group: 'org.flywaydb', name: 'flyway-core', version: '6.1.4'
     // https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-core
     compile group: 'com.fasterxml.jackson.core', name: 'jackson-core', version: '2.10.1'
-    // https://mvnrepository.com/artifact/org.junit.jupiter/junit-jupiter-engine
-    testCompile group: 'org.junit.jupiter', name: 'junit-jupiter-engine', version: '5.0.0'
     // https://mvnrepository.com/artifact/org.hamcrest/hamcrest
     testCompile group: 'org.hamcrest', name: 'hamcrest', version: '2.2'
     // https://mvnrepository.com/artifact/org.mockito/mockito-core

@@ -46,6 +46,12 @@ public class UploadServiceImpl implements UploadService {
                 throw new RuntimeException("not implemented");
             case "csv":
                 return this.createOrUpdateTranslations(this.processTranslationCsvFile(tempFile));
+            case "json":
+                String locale = tempFile.getName().substring(0, 2);
+                HashMap map = processJsonFile(tempFile);
+                ConcurrentHashMap<String, List<TranslationDTO>> sortedByLocales = new ConcurrentHashMap<>();
+                sortedByLocales.put(locale, convertToTranslationDTOs(locale, map));
+                return createOrUpdateTranslations(sortedByLocales);
             default:
                 throw new FileExtensionException("Wrong extension. File should be a an excel or csv file.");
         }
@@ -126,12 +132,31 @@ public class UploadServiceImpl implements UploadService {
         return sortedByLocales;
     }
 
+    private List<TranslationDTO> convertToTranslationDTOs(String locale, HashMap map) {
+        List<TranslationDTO> dtos = new ArrayList<>();
+        for (Object o : map.keySet()) {
+            if (LinkedHashMap.class.equals(map.get(o).getClass())) {
+                HashMap newLevel = new HashMap();
+                HashMap currentLevel = (HashMap) map.get(o);
+                currentLevel.keySet().forEach(key -> {
+                    newLevel.put(o + "." + key, currentLevel.get(key));
+                });
+                convertToTranslationDTOs(locale, newLevel).forEach(x -> {
+                    dtos.add(new TranslationDTO(x.getLocale(), x.getKey(), x.getTranslation()));
+                });
+            } else {
+                dtos.add(new TranslationDTO(locale, o.toString(), map.get(o).toString()));
+            }
+        }
+        return dtos;
+    }
+
     @Override
     public void updateKeysFromFile(String type, File tempFile) {
         String ext = this.getExtension(tempFile);
         switch (ext.toLowerCase()) {
             case "json":
-                updateKeys(processKeysJsonFile(tempFile)); break;
+                updateKeys(processJsonFile(tempFile)); break;
             case "csv":
                 throw new RuntimeException("not implemented");
             default:
@@ -139,10 +164,13 @@ public class UploadServiceImpl implements UploadService {
         }
     }
 
-    private HashMap processKeysJsonFile(File file) {
+    private HashMap processJsonFile(File file) {
         try {
+            System.out.println(file.length());
+            //System.out.println(new ObjectMapper().readValue(file, String.class));
             return new ObjectMapper().readValue(file, HashMap.class);
         } catch(IOException e) {
+            System.out.println(e.getMessage());
             throw new ProcessFileException(e.getMessage());
         }
     }
