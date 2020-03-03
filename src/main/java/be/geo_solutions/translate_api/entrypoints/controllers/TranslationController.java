@@ -20,6 +20,8 @@ import org.springframework.web.bind.annotation.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.validation.Valid;
+
 @RestController
 @RequestMapping("/api/translations")
 public class TranslationController {
@@ -37,7 +39,7 @@ public class TranslationController {
             @ApiResponse(code = 500, message = "No language with the given locale found / No translation found with the given key")
     })
     @GetMapping("/get")
-    public ResponseEntity getTranslation(@RequestBody KeyDTO keyDTO) {
+    public ResponseEntity getTranslation(@Valid @RequestBody KeyDTO keyDTO) {
         LOGGER.info("getTranslation  @/api/translation/");
         try {
             return ResponseEntity.ok(translationService.getTranslation(keyDTO));
@@ -55,7 +57,7 @@ public class TranslationController {
             @ApiResponse(code = 500, message = "No language with the given locale found / A translation with the key already exist for this locale")
     })
     @PostMapping("/add")
-    public ResponseEntity addTranslation(@RequestBody TranslationDTO translationDTO) {
+    public ResponseEntity addTranslation(@Valid @RequestBody TranslationDTO translationDTO) {
         LOGGER.info("addTranslation  @/api/translation/add");
         try {
             return ResponseEntity.ok(translationService.addTranslation(translationDTO));
@@ -73,7 +75,7 @@ public class TranslationController {
             @ApiResponse(code = 500, message = "No language with the given locale found / No translation found with the given key and locale")
     })
     @PutMapping("/update")
-    public ResponseEntity updateTranslation(@RequestBody TranslationDTO translationDTO) {
+    public ResponseEntity updateTranslation(@Valid @RequestBody TranslationDTO translationDTO) {
         LOGGER.info("updateTranslation  @/api/translation/update");
         try {
             return ResponseEntity.ok(translationService.updateTranslation(translationDTO));
@@ -91,7 +93,7 @@ public class TranslationController {
             @ApiResponse(code = 500, message = "No language with the given locale found / A translation with the key already exist for this locale")
     })
     @PostMapping("/delete")
-    public ResponseEntity deleteTranslation(@RequestBody KeyDTO keyDTO) {
+    public ResponseEntity deleteTranslation(@Valid @RequestBody KeyDTO keyDTO) {
         LOGGER.info("deleteTranslation  @/api/translation/delete");
         try {
             return ResponseEntity.ok(translationService.deleteTranslation(keyDTO));

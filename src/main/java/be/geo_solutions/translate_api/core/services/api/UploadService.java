@@ -1,16 +1,13 @@
 package be.geo_solutions.translate_api.core.services.api;
 
 import be.geo_solutions.translate_api.core.dto.TranslationDTO;
-import be.geo_solutions.translate_api.core.services.impl.TranslationServiceImpl;
-import be.geo_solutions.translate_api.core.services.impl.UploadServiceImpl;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.List;
 
 public interface UploadService {
-    List<TranslationDTO> createTranslationsFromFile(String type, File tempFile);
+    List<TranslationDTO> createTranslationsFromFile(File tempFile) throws IOException;
 
-    void updateKeysFromFile(String type, File tempFile);
+    void updateKeysFromFile(File tempFile);
 }

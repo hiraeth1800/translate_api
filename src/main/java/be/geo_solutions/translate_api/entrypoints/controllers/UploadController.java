@@ -36,12 +36,12 @@ public class UploadController {
             @ApiResponse(code = 500, message = "Something went wrong")
     })
     @PostMapping("/{type}")
-    public ResponseEntity createTranslationsFromFile(@PathVariable(value = "type") String type, @RequestParam(value = "file") MultipartFile file) {
+    public ResponseEntity createTranslationsFromFile(@RequestParam(value = "file") MultipartFile file) {
         try {
-            LOGGER.info("createTranslationsFromFile  @/api/upload/translations/{type}");
+            LOGGER.info("createTranslationsFromFile  @/api/upload/translations");
             Path tempPath = new File(System.getProperty("java.io.tmpdir"), file.getOriginalFilename()).toPath();
             File tempFile = Files.write(tempPath, file.getBytes()).toFile();
-            List<TranslationDTO> translations = uploadService.createTranslationsFromFile(type, tempFile);
+            List<TranslationDTO> translations = uploadService.createTranslationsFromFile(tempFile);
             return ResponseEntity.status(HttpStatus.OK).body(translations);
         } catch (IOException | RuntimeException e) {
             if ("not implemented".equals(e.getMessage())) {
@@ -59,14 +59,14 @@ public class UploadController {
             @ApiResponse(code = 400, message = "Fault with the file"),
             @ApiResponse(code = 500, message = "Something went wrong")
     })
-    @PostMapping("/keys/{type}")
-    public ResponseEntity updateKeysFromFile(@PathVariable(value = "type") String type, @RequestParam(value = "file") MultipartFile file) {
+    @PostMapping("/keys")
+    public ResponseEntity updateKeysFromFile(@RequestParam(value = "file") MultipartFile file) {
         try {
-            LOGGER.info("updateKeysFromFile  @/api/upload/keys/{type}");
+            LOGGER.info("updateKeysFromFile  @/api/upload/keys");
             Path tempPath = new File(System.getProperty("java.io.tmpdir"), file.getOriginalFilename()).toPath();
             File tempFile = Files.write(tempPath, file.getBytes()).toFile();
-            uploadService.updateKeysFromFile(type, tempFile);
-            return ResponseEntity.status(HttpStatus.OK).body(new StringResponse("Ok"));
+            uploadService.updateKeysFromFile(tempFile);
+            return ResponseEntity.status(HttpStatus.OK).body(new StringResponse("keys updated"));
         } catch (IOException | RuntimeException e) {
             if ("not implemented".equals(e.getMessage())) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Updating keys from csv file is not yet implemented");

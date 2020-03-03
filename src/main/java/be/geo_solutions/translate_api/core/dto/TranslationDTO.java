@@ -1,8 +1,13 @@
 package be.geo_solutions.translate_api.core.dto;
 
+import javax.validation.constraints.NotNull;
+
 public class TranslationDTO {
+    @NotNull
     private String locale;
+    @NotNull
     private String key;
+    @NotNull
     private String translation;
 
     public TranslationDTO() {

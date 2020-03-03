@@ -12,15 +12,18 @@ import be.geo_solutions.translate_api.exceptions.FileFormatException;
 import be.geo_solutions.translate_api.exceptions.LanguageNotFoundException;
 import be.geo_solutions.translate_api.exceptions.ProcessFileException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.poi.ss.usermodel.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.IntStream;
 
 @Service
 public class UploadServiceImpl implements UploadService {
@@ -35,25 +38,39 @@ public class UploadServiceImpl implements UploadService {
         this.keyService = keyService;
     }
 
+    private String getExtension(File file) {
+        String fileName = file.getName();
+        int lastIndexOf = fileName.lastIndexOf(".");
+        if (lastIndexOf == -1) return "";
+        return fileName.substring(lastIndexOf + 1);
+    }
+
+    private HashMap processJsonFile(File file) {
+        try {
+            return new ObjectMapper().readValue(file, HashMap.class);
+        } catch(IOException e) {
+            throw new ProcessFileException(e.getMessage());
+        }
+    }
+
     @Override
-    public List<TranslationDTO> createTranslationsFromFile(String type, File tempFile)  {
-        // if csv go csv create method
+    public List<TranslationDTO> createTranslationsFromFile(File tempFile) throws IOException {
         // read content try to parse into translation and save - > if saved add to list return list (filename is locale)
         String ext = this.getExtension(tempFile);
         switch (ext.toLowerCase()) {
-            case "xls":
-            case "xlsx":
-                throw new RuntimeException("not implemented");
-            case "csv":
-                return this.createOrUpdateTranslations(this.processTranslationCsvFile(tempFile));
             case "json":
                 String locale = tempFile.getName().substring(0, 2);
                 HashMap map = processJsonFile(tempFile);
                 ConcurrentHashMap<String, List<TranslationDTO>> sortedByLocales = new ConcurrentHashMap<>();
                 sortedByLocales.put(locale, convertToTranslationDTOs(locale, map));
                 return createOrUpdateTranslations(sortedByLocales);
+            case "csv":
+                return this.createOrUpdateTranslations(this.processTranslationCsvFile(tempFile));
+            case "xls":
+            case "xlsx":
+                return this.createOrUpdateTranslations(processTranslationExcelFile(tempFile));
             default:
-                throw new FileExtensionException("Wrong extension. File should be a an excel or csv file.");
+                throw new FileExtensionException("Wrong extension. File should be a json, excel or csv file. (.json, .csv, .xls, .xlsx)");
         }
     }
 
@@ -84,13 +101,6 @@ public class UploadServiceImpl implements UploadService {
             }
         }
         return failedToCreate;
-    }
-
-    private String getExtension(File file) {
-        String fileName = file.getName();
-        int lastIndexOf = fileName.lastIndexOf(".");
-        if (lastIndexOf == -1) return "";
-        return fileName.substring(lastIndexOf + 1);
     }
 
     private ConcurrentHashMap<String, List<TranslationDTO>> processTranslationCsvFile(File file) {
@@ -132,6 +142,59 @@ public class UploadServiceImpl implements UploadService {
         return sortedByLocales;
     }
 
+    private ConcurrentHashMap<String, List<TranslationDTO>> processTranslationExcelFile(File file) throws IOException {
+        ConcurrentHashMap<String, List<TranslationDTO>> translations = new ConcurrentHashMap<>();
+        List<TranslationDTO> dtos = new ArrayList<>();
+        Workbook workbook = getWorkBookFromFile(file);
+        IntStream.range(0, workbook.getNumberOfSheets()).forEach(i -> {
+            String locale = workbook.getSheetAt(i).getSheetName();
+            if (locale.toLowerCase().equals("sheet" + i)){
+                locale = "";
+            }
+            List<TranslationDTO> translationDTOs = getTranslationDTOsFromSheet(locale, workbook.getSheetAt(i));
+            dtos.addAll(translationDTOs);
+        });
+        dtos.forEach(dto -> {
+            if (!translations.containsKey(dto.getLocale())) {
+                translations.put(dto.getLocale(), new ArrayList<>());
+            }
+            translations.get(dto.getLocale()).add(dto);
+        });
+        return translations;
+    }
+
+    private List<TranslationDTO> getTranslationDTOsFromSheet(String locale, Sheet sheet) {
+        List<TranslationDTO> translationDTOs = new ArrayList<>();
+        Iterator<Row> rows = sheet.rowIterator();
+        while (rows.hasNext()) {
+            Row row = rows.next();
+            TranslationDTO translationDTO = new TranslationDTO();
+            if (row.getPhysicalNumberOfCells() == 2) {
+                if (!locale.equals("")) {
+                    translationDTO.setLocale(locale);
+                }
+                translationDTO.setKey(row.getCell(0).getStringCellValue().trim());
+                translationDTO.setTranslation(row.getCell(1).getStringCellValue().trim());
+            } else {
+                translationDTO.setLocale(row.getCell(0).getStringCellValue().trim());
+                translationDTO.setKey(row.getCell(1).getStringCellValue().trim());
+                translationDTO.setTranslation(row.getCell(2).getStringCellValue().trim());
+            }
+            translationDTOs.add(translationDTO);
+        }
+        return translationDTOs;
+    }
+
+    private Workbook getWorkBookFromFile(File file) throws IOException {
+        try {
+            return  WorkbookFactory.create(new FileInputStream(file));
+        } catch (IOException e) {
+            e.printStackTrace();
+            throw new IOException("Error reading file");
+        }
+    }
+
+    // used for jsonfiles
     private List<TranslationDTO> convertToTranslationDTOs(String locale, HashMap map) {
         List<TranslationDTO> dtos = new ArrayList<>();
         for (Object o : map.keySet()) {
@@ -152,26 +215,17 @@ public class UploadServiceImpl implements UploadService {
     }
 
     @Override
-    public void updateKeysFromFile(String type, File tempFile) {
+    public void updateKeysFromFile(File tempFile) {
         String ext = this.getExtension(tempFile);
         switch (ext.toLowerCase()) {
             case "json":
                 updateKeys(processJsonFile(tempFile)); break;
             case "csv":
+            case "xls":
+            case "xlsx":
                 throw new RuntimeException("not implemented");
             default:
-                throw new FileExtensionException("Wrong extension. File should be a an excel or csv file.");
-        }
-    }
-
-    private HashMap processJsonFile(File file) {
-        try {
-            System.out.println(file.length());
-            //System.out.println(new ObjectMapper().readValue(file, String.class));
-            return new ObjectMapper().readValue(file, HashMap.class);
-        } catch(IOException e) {
-            System.out.println(e.getMessage());
-            throw new ProcessFileException(e.getMessage());
+                throw new FileExtensionException("Wrong extension. File should be a json, excel or csv file. (.json, .csv, .xls, .xlsx)");
         }
     }
 
