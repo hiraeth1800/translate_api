@@ -1,4 +1,4 @@
-package com.example.demo_translate_api;
+package be.geo_solutions.translate_api;
 
 import be.geo_solutions.translate_api.core.services.impl.KeyServiceImplTest;
 import be.geo_solutions.translate_api.core.services.impl.LanguageServiceImplTest;
