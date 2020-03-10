@@ -3,7 +3,6 @@ package be.geo_solutions.translate_api.core.services.impl;
 import be.geo_solutions.translate_api.core.services.api.DownloadService;
 import be.geo_solutions.translate_api.core.services.api.KeyService;
 import be.geo_solutions.translate_api.core.services.api.LanguageService;
-import be.geo_solutions.translate_api.exceptions.FileExtensionException;
 import be.geo_solutions.translate_api.exceptions.FileFormatException;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;

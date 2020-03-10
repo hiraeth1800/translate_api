@@ -9,20 +9,18 @@ import be.geo_solutions.translate_api.core.services.api.LanguageService;
 import be.geo_solutions.translate_api.core.services.api.TranslationService;
 import be.geo_solutions.translate_api.exceptions.DuplicateTranslationException;
 import be.geo_solutions.translate_api.exceptions.KeyNotFoundException;
-import org.aspectj.lang.annotation.Before;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.function.Executable;
 import org.mockito.Mock;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import javax.transaction.Transactional;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;

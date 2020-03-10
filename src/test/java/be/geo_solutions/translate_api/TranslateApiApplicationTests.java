@@ -11,7 +11,7 @@ import org.springframework.boot.test.context.SpringBootTest;
         LanguageServiceImplTest.class,
         TranslationServiceImplTest.class
 })
-class TranslateApiApplicationTests {
+public class TranslateApiApplicationTests {
 
     @Test
     void contextLoads() {

@@ -1,8 +1,8 @@
 package be.geo_solutions.translate_api.entrypoints.controllers;
 
 import be.geo_solutions.translate_api.core.dto.StringResponse;
-import be.geo_solutions.translate_api.exceptions.LanguageNotFoundException;
 import be.geo_solutions.translate_api.core.services.api.KeyService;
+import be.geo_solutions.translate_api.exceptions.LanguageNotFoundException;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
@@ -78,7 +78,7 @@ public class KeyController {
             @ApiResponse(code = 200, message = "Successfully retrieved locales from updated languages", response = String.class, responseContainer = "List")
     })
     @PostMapping("/update")
-    public ResponseEntity updateKeys() {
+    public ResponseEntity updateKeysByLocale() {
         LOGGER.info("updateKeys  @/api/keys/update");
         try {
             return ResponseEntity.ok(keyService.updateKeys());
@@ -93,10 +93,12 @@ public class KeyController {
             @ApiResponse(code = 200, message = "Successfully retrieved the created keys for the language", response = String.class, responseContainer = "List")
     })
     @PostMapping("/update/{locale}")
-    public ResponseEntity updateKeys(@PathVariable String locale) {
+    public ResponseEntity updateKeysByLocale(@PathVariable String locale) {
         LOGGER.info("updateKeys  @/api/keys/update/{locale}");
         try {
             return ResponseEntity.ok(keyService.updateKeysByLocale(locale));
+        } catch (LanguageNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         } catch (Exception e) {
             LOGGER.error("!!! Unexpected error:  " + e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new StringResponse("An unexpected error occurred"));

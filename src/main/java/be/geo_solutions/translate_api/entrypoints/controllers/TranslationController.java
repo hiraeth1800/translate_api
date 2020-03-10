@@ -1,24 +1,22 @@
 package be.geo_solutions.translate_api.entrypoints.controllers;
 
 
-import be.geo_solutions.translate_api.core.dto.StringResponse;
-import be.geo_solutions.translate_api.exceptions.LanguageNotFoundException;
 import be.geo_solutions.translate_api.core.dto.KeyDTO;
+import be.geo_solutions.translate_api.core.dto.StringResponse;
 import be.geo_solutions.translate_api.core.dto.TranslationDTO;
 import be.geo_solutions.translate_api.core.services.api.TranslationService;
 import be.geo_solutions.translate_api.core.services.impl.TranslationServiceImpl;
 import be.geo_solutions.translate_api.exceptions.DuplicateTranslationException;
-import be.geo_solutions.translate_api.exceptions.EmptyTranslationException;
 import be.geo_solutions.translate_api.exceptions.KeyNotFoundException;
+import be.geo_solutions.translate_api.exceptions.LanguageNotFoundException;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.validation.Valid;
 

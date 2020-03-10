@@ -1,17 +1,17 @@
 package be.geo_solutions.translate_api.core.services.impl;
 
-import be.geo_solutions.translate_api.core.services.api.LanguageService;
 import be.geo_solutions.translate_api.core.dto.KeyDTO;
 import be.geo_solutions.translate_api.core.dto.TranslationDTO;
 import be.geo_solutions.translate_api.core.gateways.TranslationGateway;
 import be.geo_solutions.translate_api.core.model.Language;
 import be.geo_solutions.translate_api.core.model.Translation;
+import be.geo_solutions.translate_api.core.services.api.LanguageService;
 import be.geo_solutions.translate_api.core.services.api.TranslationService;
-
 import be.geo_solutions.translate_api.exceptions.DuplicateTranslationException;
 import be.geo_solutions.translate_api.exceptions.KeyNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -47,8 +47,9 @@ public class TranslationServiceImpl implements TranslationService {
             return new TranslationDTO(translation.get().getLanguage().getLocale(),
                     translation.get().getKey(), translation.get().getValue());
         } else {
-            LOGGER.warn("No key " + keyDTO.getKey() + " found for locale " + keyDTO.getLocale());
-            throw new KeyNotFoundException("No key " + keyDTO.getKey() + " found for locale " + keyDTO.getLocale());
+            String message = "No key " + keyDTO.getKey() + " found for locale " + keyDTO.getLocale();
+            LOGGER.warn(message);
+            throw new KeyNotFoundException(message);
         }
     }
 
@@ -63,8 +64,9 @@ public class TranslationServiceImpl implements TranslationService {
         Language language = languageService.findByLocale(translationDTO.getLocale());
         language.getTranslations().forEach(translation -> {
             if (translation.getKey().equals(translationDTO.getKey().toUpperCase())) {
-                LOGGER.warn("Translation with key " + translationDTO.getKey() + " already exists");
-                throw new DuplicateTranslationException("Translation with key " + translationDTO.getKey() + " already exists");
+                String message = "Translation with key " + translationDTO.getKey() + " already exists";
+                LOGGER.warn(message);
+                throw new DuplicateTranslationException(message);
             }
         });
         if (translationDTO.getTranslation() == null) {
@@ -95,8 +97,9 @@ public class TranslationServiceImpl implements TranslationService {
                 return translationDTO;
             }
         }
-        LOGGER.warn("No key " + translationDTO.getKey() + " found for locale " + translationDTO.getLocale());
-        throw new KeyNotFoundException("No key " + translationDTO.getKey() + " found for locale " + translationDTO.getLocale());
+        String message = "No key " + translationDTO.getKey() + " found for locale " + translationDTO.getLocale();
+        LOGGER.warn(message);
+        throw new KeyNotFoundException(message);
     }
 
     /**
@@ -117,8 +120,9 @@ public class TranslationServiceImpl implements TranslationService {
             translationGateway.deleteById(trans.get().getId());
             return new TranslationDTO(keyDTO.getLocale(), keyDTO.getKey(), trans.get().getValue());
         }
-        LOGGER.warn("No key " + keyDTO.getLocale() + " found for locale " + keyDTO.getLocale());
-        throw new KeyNotFoundException("No key " + keyDTO.getKey() + " found for locale " + keyDTO.getLocale());
+        String message = "No key " + keyDTO.getKey() + " found for locale " + keyDTO.getLocale();
+        LOGGER.warn(message);
+        throw new KeyNotFoundException(message);
     }
 
     @Override
@@ -140,4 +144,5 @@ public class TranslationServiceImpl implements TranslationService {
     public List<Translation> findByKey(String key) {
         return translationGateway.findByKey(key);
     }
+
 }

@@ -1,10 +1,10 @@
 package be.geo_solutions.translate_api.entrypoints.controllers;
 
-import be.geo_solutions.translate_api.exceptions.LanguageNotFoundException;
 import be.geo_solutions.translate_api.core.dto.StringResponse;
 import be.geo_solutions.translate_api.core.services.api.KeyService;
-import be.geo_solutions.translate_api.exceptions.DuplicateLanguageException;
 import be.geo_solutions.translate_api.core.services.api.LanguageService;
+import be.geo_solutions.translate_api.exceptions.DuplicateLanguageException;
+import be.geo_solutions.translate_api.exceptions.LanguageNotFoundException;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
@@ -69,7 +69,7 @@ public class LanguageController {
     })
     @PostMapping("/add")
     public ResponseEntity addLanguage(@RequestBody String locale) {
-        LOGGER.info("addLanguage  @/api/languages/add/{locale}");
+        LOGGER.info("addLanguage  @/api/languages/add");
         try {
             languageService.addLanguage(locale);
             //not adding all the keys cause the values will be "" leaving the texts blank by initiating the language

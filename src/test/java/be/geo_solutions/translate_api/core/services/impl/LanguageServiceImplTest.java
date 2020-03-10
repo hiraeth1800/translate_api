@@ -9,8 +9,8 @@ import be.geo_solutions.translate_api.exceptions.LanguageNotFoundException;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.springframework.boot.test.context.SpringBootTest;
-import javax.transaction.Transactional;
 
+import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
