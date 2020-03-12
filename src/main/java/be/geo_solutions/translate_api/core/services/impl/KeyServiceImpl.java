@@ -60,7 +60,9 @@ public class KeyServiceImpl implements KeyService {
     @Override
     public ConcurrentHashMap<String, List<String>> getMissingKeys() {
         ConcurrentHashMap<String, List<String>> missingKeys = new ConcurrentHashMap<>();
-        languageService.findAll().forEach(language -> {
+        List<Language> all = languageService.findAll();
+        all.forEach(language -> {
+            System.out.println(language);
             Set<String> allKeys = new HashSet<>(getKeys());
             Set<String> keys = new HashSet<>(getKeysByLocale(language.getLocale()));
             allKeys.removeAll(keys);

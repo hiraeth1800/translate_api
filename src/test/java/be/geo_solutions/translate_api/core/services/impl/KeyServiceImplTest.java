@@ -12,6 +12,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import javax.transaction.Transactional;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -61,12 +63,13 @@ public class KeyServiceImplTest {
         List<Translation> frTranslations = new ArrayList<>();
         frTranslations.add(new Translation(languages.get(0), "KEY3", "traduction 2"));
         frTranslations.get(0).setId(6L);
-        frTranslations.add(new Translation(languages.get(0), "KEY1", "traduction 1"));
-        frTranslations.get(1).setId(7L);
+
         languages.get(2).setTranslations(frTranslations);
 
         when(languageService.findAll()).thenReturn(languages);
         when(languageService.findByLocale(testLocale)).thenReturn(languages.get(0));
+        when(languageService.findByLocale("nl")).thenReturn(languages.get(1));
+        when(languageService.findByLocale("fr")).thenReturn(languages.get(2));
     }
 
     @Test
@@ -100,11 +103,11 @@ public class KeyServiceImplTest {
     @Test
     @Transactional
     void getMissingKeys() {
-        Map<String, List<String>> missingKeys = new HashMap<>();
-        missingKeys.put("en", Arrays.asList("KEY3"));
-        missingKeys.put("fr", Arrays.asList("KEY2"));
-        // TODO fix nullpointer
-        /*
+        Map<String, List<String>> expectedMissingKeys = new HashMap<>();
+        expectedMissingKeys.put("en", Arrays.asList("KEY3"));
+        String array[] = { "KEY2", "KEY1" };
+        expectedMissingKeys.put("fr", Arrays.asList(array));
+
         doReturn(languages.get(0).getTranslations()
                 .stream()
                 .map(Translation::getKey)
@@ -112,8 +115,11 @@ public class KeyServiceImplTest {
                 .collect(Collectors.toList()))
                 .when(keyServiceSpy)
                 .getKeysByLocale(testLocale);
-        assertEquals(missingKeys.size(), keyServiceSpy.getMissingKeys().size());
-        */
+        ConcurrentHashMap<String, List<String>> missingKeys = keyServiceSpy.getMissingKeys();
+        assertEquals(expectedMissingKeys.size(), missingKeys.size());
+        assertEquals(expectedMissingKeys.get("en"), missingKeys.get("en"));
+        assertEquals(expectedMissingKeys.get("fr"), missingKeys.get("fr"));
+
     }
 
     @Test
@@ -157,7 +163,6 @@ public class KeyServiceImplTest {
         verify(translationService).deleteById(4L);
         verify(translationService).deleteById(5L);
         verify(translationService).deleteById(6L);
-        verify(translationService).deleteById(7L);
     }
 
     @Test

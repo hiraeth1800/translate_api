@@ -168,7 +168,6 @@ class KeyControllerTest {
     public void addKey() throws Exception {
         String url = "/api/keys/add";
         String body = "ADDED.KEY";
-        String verifyUrl = "/api/keys";
 
         mvc.perform(post(url)
                 .contentType(MediaType.APPLICATION_JSON)
@@ -178,15 +177,6 @@ class KeyControllerTest {
                 .andDo(print())
                 .andExpect(jsonPath("$", hasSize(4)))
                 .andExpect(jsonPath("$", containsInAnyOrder("en", "nl", "fr", "de")));
-
-        // todo bevestig dat key is toegevoegd zerkt niet in test wel in code --> in memory db?
-        /*String keys[] = { "HOME", "KEY.NL", "KEY.TO.DELETE.IN.TEST", "KEY.TO.UPDATE.IN.TEST", "ADDED.KEY" };
-
-        mvc.perform(get(verifyUrl)
-                .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$", hasSize(4)))
-                .andExpect(jsonPath("$", containsInAnyOrder(keys)));*/
     }
 
     @Test

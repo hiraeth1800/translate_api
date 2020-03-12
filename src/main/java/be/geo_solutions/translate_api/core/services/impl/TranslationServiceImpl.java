@@ -20,6 +20,17 @@ import java.util.Optional;
 @Service
 public class TranslationServiceImpl implements TranslationService {
 
+    /**
+     * Use properties via getters for tests to succeed.
+     * Mocks can't instantiate attributes from application.properties
+     * Workaround: use via getters and let mock return property value in getter
+     */
+    @Value("${message.error.key-not-found}")
+    private String keyNotFoundMessage;
+
+    @Value("${message.error.duplicate-translation}")
+    private String duplicateTranslationMessage;
+
     private static final Logger LOGGER = LoggerFactory.getLogger(TranslationServiceImpl.class);
     private final TranslationGateway translationGateway;
     private final LanguageService languageService;

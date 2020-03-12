@@ -83,12 +83,11 @@ public class TranslationServiceImplTest {
                 .thenReturn(any());
         TranslationDTO translationDTO = new TranslationDTO(testLocale, "NEW.KEY", "new translation");
 
-        assertEquals(translationDTO.getClass(), translationService.addTranslation(translationDTO).getClass());
-        assertEquals(translationDTO.getLocale(), translationService.addTranslation(translationDTO).getLocale());
-        assertEquals(translationDTO.getKey(), translationService.addTranslation(translationDTO).getKey());
-        assertEquals(translationDTO.getTranslation(), translationService.addTranslation(translationDTO).getTranslation());
-        // TODO test if size is changed but how?
-        assertEquals(1, languageService.findByLocale(testLocale).getTranslations().size());
+        TranslationDTO addedTranslationDTO = translationService.addTranslation(translationDTO);
+        assertEquals(translationDTO.getClass(), addedTranslationDTO.getClass());
+        assertEquals(translationDTO.getLocale(), addedTranslationDTO.getLocale());
+        assertEquals(translationDTO.getKey(), addedTranslationDTO.getKey());
+        assertEquals(translationDTO.getTranslation(), addedTranslationDTO.getTranslation());
     }
 
     @Test

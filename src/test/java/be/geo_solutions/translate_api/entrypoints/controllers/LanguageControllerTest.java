@@ -95,7 +95,6 @@ class LanguageControllerTest {
                 .content(locale)
                 .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
-        // TODO should return http created
     }
 
     @Test
