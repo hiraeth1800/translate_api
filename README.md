@@ -3,3 +3,19 @@ A spring boot rest API that can be used in front end applications to translate o
 
 # rest endpoints
 ![alt text](https://i.gyazo.com/cb368e59f3a56a9fd4fb325dc308942f.png)
+
+{key} -> 
+{
+    "locale": "",
+    "key": ""
+}
+
+{translation} ->
+{
+    "locale": "",
+    "key": "",
+    "translation": ""
+}
+
+{language} ->
+json object met keys als properties en value
